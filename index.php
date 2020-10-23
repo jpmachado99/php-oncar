@@ -1,35 +1,54 @@
-<?php 
+<?php
 error_reporting(E_ALL ^ E_NOTICE);
 
 ?>
+
+
 <!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<title>Teste PHP - OnCar</title>
-	<link href="css/bootstrap.css" rel="stylesheet">
-</head>
-<body>
+<html lang="pt-br">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Teste PHP - OnCar</title>
 
-	<div class="navbar navbar-inverse navbar-fixed-top">
-		<div class="container">
-			<div class="navbar-header">
-				<a class="navbar-brand" href="index.php">Menu</a>
-			</div>
+        <link href="styles/css/bootstrap.min.css" rel="stylesheet">
+        <!-- <link href="styles/fontawesome-5/css/all.css" rel="stylesheet"> load all styles -->
+    </head>
+    <body> 
 
-			<div>
-				<ul class="nav navbar-nav">
-					<li><a href="produto-formulario.php">Adicionar Produtos</a></li>
-					<li><a href="produto-lista.php">Lista de Produtos</a></li>
-					<li><a href="contato.php">Contato</a></li>
-				</ul>
-			</div>
-		</div>
-	</div>
+        <div class="container">
+            
+            <div class="principal">
 
-	<div class="container">
-		
-		<div class="principal">
+                <script src="https://code.jquery.com/jquery-2.1.4.js" integrity="sha256-siFczlgw4jULnUICcdm9gjQPZkw/YPDqhQ9+nAOScE4=" crossorigin="anonymous"></script>
+                <script src="styles/js/bootstrap.min.js"></script>
 
-        </div>
-    </div>
+                <h3 class="text-center">Concessionária</h3>
+
+                <div id="main" class="container-fluid">
+                    <h5 class="page-header">Template Inicial</h5>
+                </div>
+
+                <div id="veiculos">
+                    
+
+
+                </div>
+
+
+
+
+            </div> <!-- principal -->
+        </div> <!-- container -->
+
+
+
+    </body>
+</html>
+
+<script>
+    $(document).ready(function(){
+        $('#veiculos').load('api/consulta_veiculos.php');
+    });
+</script>
