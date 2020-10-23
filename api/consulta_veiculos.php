@@ -3,26 +3,26 @@ header('Content-Type: application/json');
 
 require_once("../conexao.php");
 
-$select = "
-SELECT * 
-FROM TBL_VEICULOS";
+$data = $conn->query('SELECT * FROM TBL_VEICULOS');
 
-$carros = array();
-$sql = mysqli_query(
-    $conexao, 
-    "SELECT * FROM TBL_VEICULOS"
-);
-
-while($carro = mysqli_fetch_assoc($sql)) {
-    array_push($carros, $carro);
+if ($data) {
+    $resultado = array();
+    foreach($data as $row) {
+        array_push($resultado, $row);
+    }
 
     echo json_encode(array(
-        'veiculo' => $carro['veiculo'],
-        'marca' => $carro['marca'],
-        'descricao' => utf8_encode( substr($carro['descricao'], 0, 40) ),
-        'vendido' => $carro['vendido']
+        'success' => true,
+        'resultado' => $resultado
+    ));
+} else {
+    echo json_encode(array(
+        'success' => false,
+        'msg' => 'Nenhum registro foi encontrado!'
     ));
 }
+
+
 
 ?>
 
