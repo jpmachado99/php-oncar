@@ -43,7 +43,33 @@ error_reporting(E_ALL ^ E_NOTICE);
 
                         </tbody>
                     </table>
-                    
+                </div>
+                
+                <div class='text-right'>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">Adicionar</button>
+                    </div>
+                </div>
+
+                <!-- Modal -->
+                <div id="myModal" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Modal Header</h4>
+                            </div>
+                            <div class="modal-body btn-group">
+                                <p></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" id="btn_add">Adicionar</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
 
@@ -59,49 +85,76 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 <script>
     $(document).ready(function(){
-        jQuery.ajax({
-            type: "GET",
-            url: "api/consulta_veiculos.php",
-            success: function(response) {
-                if (response.success){
-                    //console.log(response);
+        getVeiculos();
 
-                    $.each(response.resultado, function() {
-                        if (this.vendido == 0) {
-                            vend = "Não";
-                        } else {
-                            vend = "Sim";
-                        }
+        function getVeiculos() {
+            jQuery.ajax({
+                type: "GET",
+                url: "api/consulta_veiculos.php",
+                success: function(response) {
+                    if (response.success){
+                        //console.log(response);
 
-                        iconEditar  = "<i class='fa fa-pen'></i>";
-                        iconAdicionar = "<i class='fa fa-plus'></i>";
+                        $.each(response.resultado, function() {
+                            if (this.vendido == 0) {
+                                vend = "Não";
+                            } else {
+                                vend = "Sim";
+                            }
 
+                            iconEditar  = "<i class='fa fa-pen'></i>";
+                            iconAdicionar = "<i class='fa fa-plus'></i>";
+
+                            var html = 
+                            "<tr><td>"
+                                + this.veiculo +
+                            "</td><td>"
+                                + this.marca +
+                            "</td><td>"
+                                + this.ano +
+                            "</td><td>"
+                                + vend +
+                            "</td><td>" 
+                                + "<a id='editar'><i class='fa fa-pen text-primary' aria-hidden='true'></i></a>  <a id='visualizar'><i class='fa fa-search text-primary'></i></i></a>" +
+                            "<td></tr>" +
+                            "<input type='hidden' name='id_veiculo' value='"+this.id_veiculo+"' />";
+                            $('#tbl_veiculos > tbody').append(html);
+                        });
+
+                    } else {
                         var html = 
-                        "<tr><td>"
-                            + this.veiculo +
-                        "</td><td>"
-                            + this.marca +
-                        "</td><td>"
-                            + this.ano +
-                        "</td><td>"
-                            + vend +
-                        "</td><td>" 
-                            + "<a id='editar'><i class='fa fa-pen text-primary' aria-hidden='true'></i></a>  <a id='adicionar'><i class='fa fa-plus-circle text-primary' aria-hidden='true'></i></a>" +
-                        "<td></tr>"
-                        ;
-                        $('#tbl_veiculos > tbody').append(html);
-                    });
+                        "<div class='alert alert-warning text-center'> <strong>"+response.msg+"</strong></div>";
 
-                } else {
-                    var html = 
-                    "<div class='alert alert-warning text-center'> <strong>"+response.msg+"</strong></div>";
-
-                    $("#div_veiculos").html(html);
-                    $(".container-fluid").html("your new header");
+                        $("#div_veiculos").html(html);
+                        $(".container-fluid").html("your new header");
+                    }
                 }
-            },
+            });
+        }
+
+
+        $("#btn_add").click(function() {
+            gravaVeiculos();
         });
 
+        function gravaVeiculos() {
+            var dados = new FormData($("#myModal")[0]);
+
+            jQuery.ajax({
+                type: "POST",
+                url: "api/grava_veiculos.php",
+                data: {
+                    dados
+                },
+                success: function(response){
+                    if (response.success){
+
+                    } else {
+
+                    }
+                }
+            });
+        }
 
     });
 </script>
