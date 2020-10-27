@@ -2,7 +2,9 @@
 header('Content-Type: application/json');
 
 require_once("../conexao.php");
-
+print_r($_POST);
+print_r($_REQUEST);
+die();
 try {
     //$stmt = $conn->prepare("INSERT INTO tbl_veiculos (id, name, password, question, answer)  VALUES (NULL, :name, :password, :question, :answer)");
     //$stmt->bindValue(":name", $_POST['name']);

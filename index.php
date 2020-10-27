@@ -14,20 +14,23 @@ error_reporting(E_ALL ^ E_NOTICE);
 
         <link href="styles/css/bootstrap.min.css" rel="stylesheet">
         <link href="styles/fontawesome-5/css/all.css" rel="stylesheet"> <!--load all styles -->
+        <link href="styles/css/jquery.gritter.css" rel="stylesheet">
+
     </head>
     <body> 
 
-        <div class="container">
+        <div class="container col-md-10">
             
             <div class="principal">
 
                 <script src="https://code.jquery.com/jquery-2.1.4.js" integrity="sha256-siFczlgw4jULnUICcdm9gjQPZkw/YPDqhQ9+nAOScE4=" crossorigin="anonymous"></script>
                 <script src="styles/js/bootstrap.min.js"></script>
+                <script src="styles/js/jquery.gritter.js"></script>    
 
-                <h2 class="text-center"> João Multimarcas <i class='fas fa-car'></i></h2>  <br><br>
+                <h1 class="text-center"> João Multimarcas <i class='fas fa-car'></i></h1>  <br><br>
                 
                 <div id="main" class="container-fluid text-center">
-                    <h5 class="page-header text-primary">Carros Disponíveis</h5>
+                    <h4 class="page-header text-primary">Carros Disponíveis</h4>
                 </div>
 
                 <div id="div_veiculos">
@@ -47,32 +50,60 @@ error_reporting(E_ALL ^ E_NOTICE);
                 
                 <div class='text-right'>
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">Adicionar</button>
+                        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#modalCadastrar">Cadastrar</button>
                     </div>
                 </div>
 
                 <!-- Modal -->
-                <div id="myModal" class="modal fade" role="dialog">
-                    <div class="modal-dialog">
-
+                <div id="modalCadastrar" class="modal fade" role="dialog">
+                    <div class="modal-dialog modal-lg">
                         <!-- Modal content-->
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Modal Header</h4>
+                                <h4 class="modal-title">Cadastro de Veículos</h4>
                             </div>
-                            <div class="modal-body btn-group">
-                                <p></p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-success" id="btn_add">Adicionar</button>
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                            <div class="modal-body">
+                                <form id='formCadastrarVeiculo' method="POST" enctype="multipart/form-data">
+                                    <div class="form-group row">
+                                        <label for="veiculo" class="col-sm-2 col-form-label">Veiculo:</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="veiculo" placeholder="Veículo..." maxlength="100">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="marca" class="col-sm-2 col-form-label">Marca: </label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="marca" placeholder="Marca..." maxlength="50">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="ano" class="col-sm-2 col-form-label">Ano: </label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="ano" placeholder="Ano de Fabricação" pattern="\d*" maxlength="4">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="descricao" class="col-sm-2 col-form-label">Descrição: </label>
+                                        <div class="col-sm-10">
+                                            <textarea type="text" class="form-control" id="descricao" placeholder="Deixe aqui uma descrição do veículo..." rows="5" maxlength="1000"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="vendido">
+                                        <label class="form-check-label" for="vendido"> Já foi vendido?</label>
+                                    </div><br>
+                                    <div class="text-right"> 
+                                        <div class='btn-group'>
+                                            <button type="submit" class="btn btn-success" id="add_veiculo">Salvar</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
 
                     </div>
                 </div>
-
-
 
 
             </div> <!-- principal -->
@@ -102,8 +133,6 @@ error_reporting(E_ALL ^ E_NOTICE);
                                 vend = "Sim";
                             }
 
-                            iconEditar  = "<i class='fa fa-pen'></i>";
-                            iconAdicionar = "<i class='fa fa-plus'></i>";
 
                             var html = 
                             "<tr><td>"
@@ -132,35 +161,26 @@ error_reporting(E_ALL ^ E_NOTICE);
             });
         }
 
+        
 
-        $("#btn_add").click(function() {
-            gravaVeiculos();
-        });
 
-        function gravaVeiculos() {
-            var dados = new FormData($("#myModal")[0]);
+        $("#formCadastrarVeiculo").on('submit', function(event) {
+            event.preventDefault();
+            var postData = new FormData($("#formCadastrarVeiculo")[0]);
 
-            jQuery.ajax({
-                type: "POST",
-                url: "api/grava_veiculos.php",
-                data: {
-                    dados
-                },
-                success: function(response){
-                    if (response.success){
-
+            $.ajax({
+                type: 'POST',
+                data: postData,
+                url: 'api/grava_veiculos.php',
+                success: function(response) {
+                    if (response.success) {
+                        alert("Sucesso!!!");   
                     } else {
-
+                        alert("Erro!!!");
                     }
                 }
             });
-        }
+        });
 
     });
 </script>
-
-<style>
-i {
-    padding: 5px;
-}
-</style>

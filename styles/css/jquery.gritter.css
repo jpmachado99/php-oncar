@@ -100,3 +100,20 @@
 .gritter-light .gritter-title {
     text-shadow: none;
 }
+
+.gritter-success {
+	background:rgb(60, 238, 0);
+}
+
+.gritter-warning {
+	background:rgba(190, 112, 31, 0.92);
+}
+
+.gritter-error {
+	background:rgba(153, 40, 18, 0.92);
+}
+
+.gritter-center {
+	position:fixed;
+	left:33%; right:33%; top:33%;
+}
