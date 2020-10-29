@@ -7,7 +7,7 @@ require_once("../conexao.php");
 //die();
 
 try {
-    $stmt = $conn->prepare("INSERT INTO tbl_veiculos (veiculo, marca, ano, descricao, vendido)  VALUES (:veiculo, :marca, :ano, :descricao, :vendido)");
+    $stmt = $conn->prepare("");
     $stmt->bindValue(":veiculo", $_POST['veiculo']);
     $stmt->bindValue(":marca", $_POST['marca']);
     $stmt->bindValue(":ano", $_POST['ano']);
@@ -19,13 +19,13 @@ try {
 } catch (PDOException $e) {
     die(json_encode(array(
         'success' => false,
-        'msg' => utf8_encode('Erro ao inserir dados!'),
+        'msg' => utf8_encode('Erro ao alterados dados!'),
         'error' => utf8_encode($e->getMessage())
     )));
 }
 
 die(json_encode(array(
     'success' => true,
-    'msg' => utf8_encode('Dados armazenados com sucesso!'),
+    'msg' => utf8_encode('Dados alterados com sucesso!'),
     'error' => 0
 )));

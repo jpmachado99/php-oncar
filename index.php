@@ -25,7 +25,8 @@ error_reporting(E_ALL ^ E_NOTICE);
 
                 <script src="https://code.jquery.com/jquery-2.1.4.js" integrity="sha256-siFczlgw4jULnUICcdm9gjQPZkw/YPDqhQ9+nAOScE4=" crossorigin="anonymous"></script>
                 <script src="styles/js/bootstrap.min.js"></script>
-                <script src="styles/js/jquery.gritter.js"></script>    
+                <script src="styles/js/jquery.gritter.js"></script>  
+                <script src="styles/js/bootbox.min.js"></script>  
 
                 <h1 class="text-center"> João Multimarcas <i class='fas fa-car'></i></h1>  <br><br>
                 
@@ -33,14 +34,16 @@ error_reporting(E_ALL ^ E_NOTICE);
                     <h4 class="page-header text-primary">Carros Disponíveis</h4>
                 </div>
 
-                <div id="div_veiculos">
-                    <table id="tbl_veiculos" class='table Xtable-bordered Xtable-hover Xtable-condensed'>
+                <!-- <div id='popup'></div> -->
+
+                <div id="div_veiculos" class="table-responsive">                    
+                    <table id="tbl_veiculos" class='table table-striped table-condensed'>
                         <thead>
                             <th>Veículo</th>
                             <th>Marca</th>
                             <th>Ano</th>
                             <th>Vendido</th>
-                            <th></th>
+                            <th>Ações</th>
                         </thead>
                         <tbody>
 
@@ -54,56 +57,11 @@ error_reporting(E_ALL ^ E_NOTICE);
                     </div>
                 </div>
 
-                <!-- Modal -->
-                <div id="modalCadastrar" class="modal fade" role="dialog">
-                    <div class="modal-dialog modal-lg">
-                        <!-- Modal content-->
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Cadastro de Veículos</h4>
-                            </div>
-                            <div class="modal-body">
-                                <form id='formCadastrarVeiculo' method="POST" enctype="multipart/form-data">
-                                    <div class="form-group row">
-                                        <label for="veiculo" class="col-sm-2 col-form-label">Veiculo:</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="veiculo" placeholder="Veículo..." maxlength="100">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="marca" class="col-sm-2 col-form-label">Marca: </label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="marca" placeholder="Marca..." maxlength="50">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="ano" class="col-sm-2 col-form-label">Ano: </label>
-                                        <div class="col-sm-6">
-                                            <input type="text" class="form-control" id="ano" placeholder="Ano de Fabricação" pattern="\d*" maxlength="4">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="descricao" class="col-sm-2 col-form-label">Descrição: </label>
-                                        <div class="col-sm-10">
-                                            <textarea type="text" class="form-control" id="descricao" placeholder="Deixe aqui uma descrição do veículo..." rows="5" maxlength="1000"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="vendido">
-                                        <label class="form-check-label" for="vendido"> Já foi vendido?</label>
-                                    </div><br>
-                                    <div class="text-right"> 
-                                        <div class='btn-group'>
-                                            <button type="submit" class="btn btn-success" id="add_veiculo">Salvar</button>
-                                            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                <?php require_once("modal_cadastro.php"); ?>
+                <?php require_once("modal_editar.php"); ?>
+                <?php require_once("modal_visualizar.php"); ?>
 
-                    </div>
-                </div>
+                
 
 
             </div> <!-- principal -->
@@ -114,9 +72,11 @@ error_reporting(E_ALL ^ E_NOTICE);
     </body>
 </html>
 
+<script src="funcoes.js"></script>
 <script>
     $(document).ready(function(){
         getVeiculos();
+
 
         function getVeiculos() {
             jQuery.ajax({
@@ -127,12 +87,12 @@ error_reporting(E_ALL ^ E_NOTICE);
                         //console.log(response);
 
                         $.each(response.resultado, function() {
+
                             if (this.vendido == 0) {
                                 vend = "Não";
                             } else {
                                 vend = "Sim";
                             }
-
 
                             var html = 
                             "<tr><td>"
@@ -141,46 +101,100 @@ error_reporting(E_ALL ^ E_NOTICE);
                                 + this.marca +
                             "</td><td>"
                                 + this.ano +
+                            "</td><td style='display:none'>"
+                                + this.descricao +
                             "</td><td>"
                                 + vend +
                             "</td><td>" 
-                                + "<a id='editar'><i class='fa fa-pen text-primary' aria-hidden='true'></i></a>  <a id='visualizar'><i class='fa fa-search text-primary'></i></i></a>" +
-                            "<td></tr>" +
-                            "<input type='hidden' name='id_veiculo' value='"+this.id_veiculo+"' />";
+                                + " <a id='view'    href='#modalView'   data-toggle='modal' title='visualizar'> <i class='fa fa-search text-primary'></i></a>  "
+                                + " <a id='editar'  href='#modalEditar' data-toggle='modal' title='editar'>     <i class='fa fa-pen text-primary'></i></a>  "
+                                + " <a id='excluir' value='"+this.id_veiculo+"' title='excluir'>        <i class='far fa-trash-alt text-primary'></i></a> " +
+                            "</td></tr>";
+
                             $('#tbl_veiculos > tbody').append(html);
                         });
 
                     } else {
                         var html = 
                         "<div class='alert alert-warning text-center'> <strong>"+response.msg+"</strong></div>";
-
-                        $("#div_veiculos").html(html);
-                        $(".container-fluid").html("your new header");
                     }
                 }
             });
         }
 
-        
+        $('#tbl_veiculos tbody').on('click', 'a', function() {
+            var elem_id = $(this).attr('id');
+            var id_veiculo =  $(this).attr('value');
+
+            if (elem_id == 'excluir' ) {
+                excluir(id_veiculo);
+            } else if (elem_id == 'editar') {
+                $('#editVeiculo').val($(this).parents('tr').find('td').eq(0).text());
+                $('#editMarca').val($(this).parents('tr').find('td').eq(1).text());
+                $('#editAno').val($(this).parents('tr').find('td').eq(2).text());
+                $('#editDescricao').val($(this).parents('tr').find('td').eq(3).text());
+                $('#editVendido').val($(this).parents('tr').find('td').eq(4).text() == 'Sim' ? 1 : 0 );
+            } else {
+                alert('view');
+            }
+        });
 
 
         $("#formCadastrarVeiculo").on('submit', function(event) {
             event.preventDefault();
-            var postData = new FormData($("#formCadastrarVeiculo")[0]);
+            var form_data = $("#formCadastrarVeiculo").serialize();
 
             $.ajax({
                 type: 'POST',
-                data: postData,
+                data: form_data,
                 url: 'api/grava_veiculos.php',
+                processData: false,
                 success: function(response) {
                     if (response.success) {
-                        alert("Sucesso!!!");   
+                        //console.log(response);
+
+                        $('#modalCadastrar').modal('hide');
+                        $('#formCadastrarVeiculo').each (function(){
+                            this.reset();
+                        });
+                        alert('Dados cadastrados com sucesso!!');
+                        location.reload(true);
                     } else {
-                        alert("Erro!!!");
+                        alert('Erro ao salvar dados.');
+                        $('#modalCadastrar').modal('hide');
+                        $('#formCadastrarVeiculo').each (function(){
+                            this.reset();
+                        });
+                    }
+                }
+            });
+
+        });
+
+        $("#formUpdateVeiculo").on('submit', function(event) {
+            event.preventDefault();
+            
+            var form_data = $("#formUpdateVeiculo").serialize();
+            $.ajax({
+                type: 'POST',
+                data: form_data,
+                url: 'api/update_veiculos.php',
+                processData: false,
+                success: function(response) {
+                    if (response.success) {
+                        //console.log(response);
+
+                        $('#modalEditar').modal('hide');
+                        $('#formUpdateVeiculo').each (function(){
+                            this.reset();
+                        });
+                        alert('Dados cadastrados com sucesso!!');
+                        location.reload(true);
+                    } else {
+                        alert('Erro ao salvar dados.');
                     }
                 }
             });
         });
-
     });
 </script>
