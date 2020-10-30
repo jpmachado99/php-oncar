@@ -7,19 +7,29 @@ require_once("../conexao.php");
 //die();
 
 try {
-    $stmt = $conn->prepare("");
-    $stmt->bindValue(":veiculo", $_POST['veiculo']);
-    $stmt->bindValue(":marca", $_POST['marca']);
-    $stmt->bindValue(":ano", $_POST['ano']);
-    $stmt->bindValue(":descricao", $_POST['descricao']);
-    $stmt->bindValue(":vendido", (isset($_POST['vendido']) ? '1':'0') );
+    $stmt = $conn->prepare("
+        UPDATE tbl_veiculos 
+        SET veiculo = :veiculo,
+            marca = :marca,
+            ano = :ano,
+            descricao = :descricao,
+            vendido = :vendido,
+            updated = :udpated
+        WHERE id_veiculo = :id_veiculo;");
+    $stmt->bindParam(":id_veiculo", $_POST['id_veiculo'], PDO::PARAM_INT);
+    $stmt->bindValue(":veiculo", $_POST['editVeiculo']);
+    $stmt->bindValue(":marca", $_POST['editMarca']);
+    $stmt->bindValue(":ano", $_POST['editAno']);
+    $stmt->bindValue(":descricao", $_POST['editDescricao']);
+    $stmt->bindValue(":vendido", (isset($_POST['vendido']) ? 1 : 0) );
+    $stmt->bindValue(":udpated", date('Y-m-d H:i:s') );
 
     $stmt->execute();
 
 } catch (PDOException $e) {
     die(json_encode(array(
         'success' => false,
-        'msg' => utf8_encode('Erro ao alterados dados!'),
+        'msg' => utf8_encode('Erro ao alterar os dados!'),
         'error' => utf8_encode($e->getMessage())
     )));
 }

@@ -3,8 +3,9 @@
     <div class="modal-dialog modal-lg">
         <!-- Modal content-->
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Cadastro de Veículos</h4>
+            <div class="modal-header text-center d-block">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title text-primary">Cadastro de Veículos</h3>
             </div>
             <div class="modal-body">
                 <form id='formCadastrarVeiculo' method="POST" enctype="multipart/form-data">

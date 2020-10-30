@@ -20,9 +20,7 @@ error_reporting(E_ALL ^ E_NOTICE);
     <body> 
 
         <div class="container col-md-10">
-            
             <div class="principal">
-
                 <script src="https://code.jquery.com/jquery-2.1.4.js" integrity="sha256-siFczlgw4jULnUICcdm9gjQPZkw/YPDqhQ9+nAOScE4=" crossorigin="anonymous"></script>
                 <script src="styles/js/bootstrap.min.js"></script>
                 <script src="styles/js/jquery.gritter.js"></script>  
@@ -33,8 +31,6 @@ error_reporting(E_ALL ^ E_NOTICE);
                 <div id="main" class="container-fluid text-center">
                     <h4 class="page-header text-primary">Carros Disponíveis</h4>
                 </div>
-
-                <!-- <div id='popup'></div> -->
 
                 <div id="div_veiculos" class="table-responsive">                    
                     <table id="tbl_veiculos" class='table table-striped table-condensed'>
@@ -59,15 +55,11 @@ error_reporting(E_ALL ^ E_NOTICE);
 
                 <?php require_once("modal_cadastro.php"); ?>
                 <?php require_once("modal_editar.php"); ?>
-                <?php require_once("modal_visualizar.php"); ?>
-
-                
+                <?php require_once("modal_visualizar.php"); ?>              
 
 
             </div> <!-- principal -->
         </div> <!-- container -->
-
-
 
     </body>
 </html>
@@ -106,9 +98,9 @@ error_reporting(E_ALL ^ E_NOTICE);
                             "</td><td>"
                                 + vend +
                             "</td><td>" 
-                                + " <a id='view'    href='#modalView'   data-toggle='modal' title='visualizar'> <i class='fa fa-search text-primary'></i></a>  "
-                                + " <a id='editar'  href='#modalEditar' data-toggle='modal' title='editar'>     <i class='fa fa-pen text-primary'></i></a>  "
-                                + " <a id='excluir' value='"+this.id_veiculo+"' title='excluir'>        <i class='far fa-trash-alt text-primary'></i></a> " +
+                                + " <a id='view'    data-id="+ this.id_veiculo +" href='#modalView'   data-toggle='modal' title='visualizar'> <i class='fa fa-search text-primary'></i></a>  "
+                                + " <a id='editar'  data-id="+ this.id_veiculo +" href='#modalEditar' data-toggle='modal' title='editar'>     <i class='fa fa-pen text-primary'></i></a>  "
+                                + " <a id='excluir' data-id="+ this.id_veiculo +" title='excluir'> <i class='far fa-trash-alt text-primary'></i></a> " +
                             "</td></tr>";
 
                             $('#tbl_veiculos > tbody').append(html);
@@ -124,18 +116,21 @@ error_reporting(E_ALL ^ E_NOTICE);
 
         $('#tbl_veiculos tbody').on('click', 'a', function() {
             var elem_id = $(this).attr('id');
-            var id_veiculo =  $(this).attr('value');
+            var id_veiculo = $(this).attr("data-id");
 
             if (elem_id == 'excluir' ) {
                 excluir(id_veiculo);
             } else if (elem_id == 'editar') {
-                $('#editVeiculo').val($(this).parents('tr').find('td').eq(0).text());
-                $('#editMarca').val($(this).parents('tr').find('td').eq(1).text());
-                $('#editAno').val($(this).parents('tr').find('td').eq(2).text());
-                $('#editDescricao').val($(this).parents('tr').find('td').eq(3).text());
-                $('#editVendido').val($(this).parents('tr').find('td').eq(4).text() == 'Sim' ? 1 : 0 );
+
+                veiculo = $(this).parents('tr').find('td').eq(0).text();
+                marca = $(this).parents('tr').find('td').eq(1).text();
+                ano = $(this).parents('tr').find('td').eq(2).text();
+                descricao = $(this).parents('tr').find('td').eq(3).text();
+                vendido = $(this).parents('tr').find('td').eq(4).text() == 'Sim' ? 1 : 0;
+
+                editar(id_veiculo, veiculo, marca, ano, descricao, vendido);
             } else {
-                alert('view');
+                visualizar(id_veiculo);
             }
         });
 
@@ -146,55 +141,30 @@ error_reporting(E_ALL ^ E_NOTICE);
 
             $.ajax({
                 type: 'POST',
-                data: form_data,
                 url: 'api/grava_veiculos.php',
-                processData: false,
-                success: function(response) {
-                    if (response.success) {
-                        //console.log(response);
-
-                        $('#modalCadastrar').modal('hide');
-                        $('#formCadastrarVeiculo').each (function(){
-                            this.reset();
-                        });
-                        alert('Dados cadastrados com sucesso!!');
-                        location.reload(true);
-                    } else {
-                        alert('Erro ao salvar dados.');
-                        $('#modalCadastrar').modal('hide');
-                        $('#formCadastrarVeiculo').each (function(){
-                            this.reset();
-                        });
-                    }
-                }
-            });
-
-        });
-
-        $("#formUpdateVeiculo").on('submit', function(event) {
-            event.preventDefault();
-            
-            var form_data = $("#formUpdateVeiculo").serialize();
-            $.ajax({
-                type: 'POST',
                 data: form_data,
-                url: 'api/update_veiculos.php',
                 processData: false,
                 success: function(response) {
                     if (response.success) {
                         //console.log(response);
 
-                        $('#modalEditar').modal('hide');
-                        $('#formUpdateVeiculo').each (function(){
+                        $('#modalCadastrar').modal('hide');
+                        $('#formCadastrarVeiculo').each (function(){
                             this.reset();
                         });
                         alert('Dados cadastrados com sucesso!!');
                         location.reload(true);
                     } else {
                         alert('Erro ao salvar dados.');
+                        $('#modalCadastrar').modal('hide');
+                        $('#formCadastrarVeiculo').each (function(){
+                            this.reset();
+                        });
                     }
                 }
             });
+
         });
+
     });
 </script>
